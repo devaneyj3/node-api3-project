@@ -15,8 +15,8 @@ router.post('/', validateUser, async(req, res) => {
     res.status(500).json({errorMessage: 'There was an error adding information to the database'})
   }
 });
-// ADDS A POST FOR A USER AND ALL ERROR HANDLING WORKS WITH VALIDATE USER MIDDLEWARE
-router.post('/:id/posts',  validateUserId, async(req, res) => {
+// ADDS A POST FOR A USER AND ALL ERROR HANDLING WORKS WITH VALIDATE USER AND VALIDATE USER ID MIDDLEWARE WORKS
+router.post('/:id/posts', validateUserId, validatePost, async(req, res) => {
   const id = paramsId(req)
   req.body.user_id = id
   try {
@@ -129,7 +129,15 @@ function validateUser(req, res, next) {
 
 function validatePost(req, res, next) {
 // if the request body is missing, cancel the request and respond with status 400 and { message: "missing post data" }
+if(Object.keys(req.body) < 1) {
+  res.status(400).json({ message: "missing post data"})
+}
 // if the request body is missing the required text field, cancel the request and respond with status 400 and { message: "missing required text field" }
+ else if(req.body.text === '') {
+  res.status(400).json({ message: "missing required text field"})
+} else { 
+  next()
+}
 }
 
 // reusable functions
