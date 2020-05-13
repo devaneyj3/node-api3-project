@@ -5,7 +5,7 @@ const router = express.Router();
 const userDataBase = require('./userDb')
 const postDataBase = require('../posts/postDb')
 
-// GET'S ALL THE USER AND ALL ERROR HANDLING WORKS
+// POST A NEW USER AND ALL ERROR HANDLING WORKS
 router.post('/', async(req, res) => {
   const user = req.body;
   try {
@@ -19,24 +19,15 @@ router.post('/', async(req, res) => {
     res.status(500).json({errorMessage: 'There was an error adding information to the database'})
   }
 });
-// ADDS A POST FOR A USER AND ALL ERROR HANDLING WORKS
-router.post('/:id/posts', async(req, res) => {
+// ADDS A POST FOR A USER AND ALL ERROR HANDLING WORKS WITH VALIDATE USER MIDDLEWARE
+router.post('/:id/posts', validateUserId, async(req, res) => {
   const id = paramsId(req)
-  console.log(id)
   const changes = req.body;
   changes.user_id = id
-  const users = await userDataBase.get();
-  const checkIdArray = IDnotInDatabase(id, users)
-  console.log(checkIdArray)
   try {
-    //error works
     if(changes.text === '') {
       res.status(400).json({errorMessage: "Please provide text"})
-      //this does not work
-    } else if(checkIdArray === 0) {
-      res.status(404).json({errorMessage: "That user does not exist in the database"})
-    }
-    else {
+    } else {
       const addPost = await postDataBase.insert(changes)
       res.status(201).send(addPost)
     }
@@ -46,6 +37,7 @@ router.post('/:id/posts', async(req, res) => {
   }
 });
 
+// GET'S ALL THE USER AND ALL ERROR HANDLING WORKS
 router.get('/', async(req, res) => {
   const users = await userDataBase.get();
   try {
@@ -59,48 +51,79 @@ router.get('/', async(req, res) => {
   }
 });
 
-router.get('/:id', async(req, res) => {
-  const getUserById = await userDataBase.getById(paramsId(req))
-  res.status(200).send(getUserById);
-});
-
-router.get('/:id/posts', async (req, res) => {
-  const getUserPost = await userDataBase.getUserPosts(paramsId(req))
+// GET USER BY ID AND ALL ERROR HANDLING WORKS WITH VALIDATE USER  MIDDLEWARE
+router.get('/:id', validateUserId,  async(req, res) => {
+  const id = paramsId(req)
   try {
-    res.status(200).send(getUserPost);
-  } catch {
-    res.send(404).json({message: "This user does not have any posts"})
+      const getUserById = await userDataBase.getById(id)
+      console.log(id)
+      res.status(200).send(getUserById);
+     }
+   catch {
+      res.status(500).json({errorMessage: 'There was an error getting information from the database'})
   }
 });
 
-router.delete('/:id', async(req, res) => {
-  const removeUser = await userDataBase.remove(paramsId(req));
+// GET USER'S POSTS BY ID AND ALL ERROR HANDLING WORKS WITH VALIDATE USER MIDDLEWARE
+router.get('/:id/posts', validateUserId, async (req, res) => {
   try {
-    if(removeUser <= 0 ) {
-      //TODO: THIS ERROR IS NOT BEING LOGGED
-      json.send(404).json({message: "This user was already deleted or was not found"})
+    const getUserPost = await userDataBase.getUserPosts(paramsId(req))
+    console.log(getUserPost)
+    if(getUserPost.length >= 1) {
+      res.status(200).send(getUserPost);
+    } else {
+      res.status(404).json({message: "This user does not have any posts"})
     }
-    else {
-      res.status(200).send('This user was removed')
-      }
+  } catch {
+    res.status(500).json({errorMessage: 'There was an error getting this user\'s posts from the database'})
+  }
+});
+
+// GET USER BY ID AND ALL ERROR HANDLING WORKS WITH VALIDATE USER  MIDDLEWARE
+router.delete('/:id', validateUserId, async(req, res) => {
+  await userDataBase.remove(paramsId(req));
+  try {
+    res.status(200).send('The user was removed')
   } catch {
     res.status(500).json({errorMessage: "There was an error connecting to the database"})
   }
 });
 
-router.put('/:id', (req, res) => {
-  // do your magic!
+// GET USER BY ID AND ALL ERROR HANDLING WORKS WITH VALIDATE USER MIDDLEWARE
+router.put('/:id', validateUserId, async(req, res) => {
+try {
+    const changes = req.body
+    const updateUser = await userDataBase.update(paramsId(req), changes)
+    if(changes.name === '') {
+      res.status(400).json({errorMessage: "Please provide a name"})
+      
+    } else {
+      //this is not being logged
+      console.log(updateUser)
+      res.status(200).send(updateUser)
+    }
+  } catch {
+    res.status(500).json({errorMessage: "There was an error connecting to the database"})
+  }
 });
 
 //custom middleware
 
 // validates the user id on every request that expects a user id parameter
 
-function validateUserId(req, res, next) {
+async function validateUserId(req, res, next) {
 // if the id parameter is valid, store that user object as req.user
-const { id } = req.params;
+  const id = paramsId(req)
+  const users = await userDataBase.get();
+  const checkIdArray = IDnotInDatabase(id, users);
+  // if the id parameter does not match any user id in the database, cancel the request and respond with status 400 and { message: "invalid user id" } 
+  if(checkIdArray === 0 ) {
+      //TODO: THIS ERROR IS NOT BEING LOGGED
+      res.status(400).json({message: "Invalid user ID"})
+    } else {
+      next()
+    }
 
-// if the id parameter does not match any user id in the database, cancel the request and respond with status 400 and { message: "invalid user id" } 
 }
 
 //  validates the body on a request to create a new user
