@@ -5,32 +5,23 @@ const router = express.Router();
 const userDataBase = require('./userDb')
 const postDataBase = require('../posts/postDb')
 
-// POST A NEW USER AND ALL ERROR HANDLING WORKS
-router.post('/', async(req, res) => {
-  const user = req.body;
+// POST A NEW USER AND ALL ERROR HANDLING WORKS WITH VALIDATE USER MIDDLEWARE WORKS
+router.post('/', validateUser, async(req, res) => {
   try {
-    if (user.name === '') {
-      res.status(400).json({ errorMessage: "Please provide a name for the user." })
-    } else {
-      const addUser = await userDataBase.insert(user)
-      res.status(201).send(addUser)
-    }
+    const addUser = await userDataBase.insert(req.body)
+    console.log(addUser)
+    res.status(201).send(addUser)
   } catch {
     res.status(500).json({errorMessage: 'There was an error adding information to the database'})
   }
 });
 // ADDS A POST FOR A USER AND ALL ERROR HANDLING WORKS WITH VALIDATE USER MIDDLEWARE
-router.post('/:id/posts', validateUserId, async(req, res) => {
+router.post('/:id/posts',  validateUserId, async(req, res) => {
   const id = paramsId(req)
-  const changes = req.body;
-  changes.user_id = id
+  req.body.user_id = id
   try {
-    if(changes.text === '') {
-      res.status(400).json({errorMessage: "Please provide text"})
-    } else {
-      const addPost = await postDataBase.insert(changes)
+      const addPost = await postDataBase.insert(req.body)
       res.status(201).send(addPost)
-    }
   }
   catch {
     res.status(500).json({errorMessage: 'There was an error adding information to the database'})
@@ -89,19 +80,13 @@ router.delete('/:id', validateUserId, async(req, res) => {
   }
 });
 
-// GET USER BY ID AND ALL ERROR HANDLING WORKS WITH VALIDATE USER MIDDLEWARE
-router.put('/:id', validateUserId, async(req, res) => {
+// GET USER BY ID AND ALL ERROR HANDLING WORKS WITH VALIDATE USER  AND VALIDATE USER ID MIDDLEWARE
+router.put('/:id', validateUserId, validateUser, async(req, res) => {
 try {
-    const changes = req.body
-    const updateUser = await userDataBase.update(paramsId(req), changes)
-    if(changes.name === '') {
-      res.status(400).json({errorMessage: "Please provide a name"})
-      
-    } else {
-      //this is not being logged
-      console.log(updateUser)
-      res.status(200).send(updateUser)
-    }
+    await userDataBase.update(paramsId(req), req.body)
+    console.log(req.body)
+    res.status(200).send(req.body)
+    
   } catch {
     res.status(500).json({errorMessage: "There was an error connecting to the database"})
   }
@@ -118,7 +103,6 @@ async function validateUserId(req, res, next) {
   const checkIdArray = IDnotInDatabase(id, users);
   // if the id parameter does not match any user id in the database, cancel the request and respond with status 400 and { message: "invalid user id" } 
   if(checkIdArray === 0 ) {
-      //TODO: THIS ERROR IS NOT BEING LOGGED
       res.status(400).json({message: "Invalid user ID"})
     } else {
       next()
@@ -130,7 +114,15 @@ async function validateUserId(req, res, next) {
 
 function validateUser(req, res, next) {
 // if the request body is missing, cancel the request and respond with status 400 and { message: "missing user data" }
-// if the request body is missing the required name field, cancel the request and respond with status 400 and { message: "missing required name field" }
+  if(Object.keys(req.body) < 1) {
+    res.status(400).json({ message: 'missing user data'})
+  }
+    // if the request body is missing the required name field, cancel the request and respond with status 400 and { message: "missing required name field" }
+   else if (req.body.name === '') {
+    res.status(400).json({ message: "missing required name field"})
+  } else {
+    next()
+  }
 }
 
 //   validates the body on a request to create a new post
