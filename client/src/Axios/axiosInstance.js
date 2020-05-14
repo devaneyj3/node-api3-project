@@ -5,3 +5,5 @@ const address = 'http://localhost:7000/api/users' || 'https://blog1234567.heroku
 export default axios.create({
   baseURL:  address
 });
+
+console.log(address)
