@@ -3,11 +3,13 @@ const express = require('express');
 const moment = require('moment')
 
 const server = express();
+const cors = require('cors');
 
 const userRouter = require('./users/userRouter');
 
 server.use(express.json());
 
+server.use(cors());
 server.use('/api/users/', userRouter)
 
 

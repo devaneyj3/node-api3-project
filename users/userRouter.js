@@ -72,9 +72,10 @@ router.get('/:id/posts', validateUserId, async (req, res) => {
 
 // GET USER BY ID AND ALL ERROR HANDLING WORKS WITH VALIDATE USER  MIDDLEWARE
 router.delete('/:id', validateUserId, async(req, res) => {
-  await userDataBase.remove(paramsId(req));
+  const  id = paramsId(req) 
+  await userDataBase.remove(id);
   try {
-    res.status(200).send('The user was removed')
+    res.status(200).send(id)
   } catch {
     res.status(500).json({errorMessage: "There was an error connecting to the database"})
   }
