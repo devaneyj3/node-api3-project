@@ -12,6 +12,7 @@ import Users from "../components/Users/Users";
 const App = () => {
   const [users, setUsers] = useState([]);
   const [message, setMessage] = useState("");
+  console.log(process.env)
   useEffect(() => {
     async function fetchData() {
       const getPostsPromise = await axiosInstance.get("/");
