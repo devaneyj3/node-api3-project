@@ -16,16 +16,19 @@ server.use('/api/users/', userRouter)
 
 server.use(logger)
 
-// Serve static files from the React frontend app
-server.use(express.static(path.join(__dirname, 'client/build'))) 
 
 server.get('/', (req, res) => {
   res.send("Welcome")
 });
+if (process.env.NODE_ENV === 'production') {
+  // Serve static files from the React frontend app
+  server.use(express.static(path.join(__dirname, 'client/build'))) 
+  
+  server.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname + '/client/build/index.html'))
+  })
 
-server.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname + '/client/build/index.html'))
-})
+}
 
 
 //custom middleware
