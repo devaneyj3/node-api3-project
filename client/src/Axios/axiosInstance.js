@@ -1,9 +1,7 @@
 import axios from "axios";
 
-const address = 'http://localhost:7000/api/users' || 'https://blog1234567.herokuapp.com/api/users'
 
 export default axios.create({
-  baseURL:  address
+  baseURL:  process.env.NODE_ENV =='production' ? 'https://blog1234567.herokuapp.com/api/users' : 'http://localhost:7000/api/users' 
 });
 
-console.log(address)
