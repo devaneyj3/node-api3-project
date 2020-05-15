@@ -20,28 +20,25 @@ const AddNewUser = () => {
     setAddNewUser({ ...AddNewUser, [e.target.name]: e.target.value });
   };
 
-  const submitForm = (e) => {
+  const submitForm = async (e) => {
     e.preventDefault();
-    axiosInstance
-      .post("/", AddNewUser)
-      .then((res) => {
-        console.log(res.data);
-        data.setUsers([...data.users, res.data]);
-        setMessage(res.data.name + " was added. Redirecting...");
-      })
-      .catch((err) => setMessage(err.errorMessage));
-    setAddNewUser({ name: "" });
-
-    setTimeout(() => {
-      history.push("/Users");
-    }, 2000);
+    try {
+      const newUser = await axiosInstance.post("/", AddNewUser);
+      data.setUsers([...data.users, newUser.data]);
+      setMessage(newUser.data.name + " was added. Redirecting...");
+      setTimeout(() => {
+        history.push("/Users");
+      }, 2000);
+    } catch (err) {
+      setMessage(err.response.data.message);
+    }
   };
 
   return (
     <>
       <section className="AddNewUser">
         <h1>Add New User</h1>
-        {message ? <Alert color="success">{message}</Alert> : null}
+        {message ? <Alert color="info">{message}</Alert> : null}
         <form onSubmit={submitForm}>
           <input
             text="text"
@@ -50,7 +47,7 @@ const AddNewUser = () => {
             value={AddNewUser.name}
             placeholder="Name"
           />
-          <br/>
+          <br />
           <Button color="success" type="submit">
             Add New User
           </Button>

@@ -8,42 +8,56 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Edit_User from "../components/Edit_User/Edit_User";
 import AddNewUser from "../components/Add_New_User/Add_New_User";
 import Users from "../components/Users/Users";
+import { useHistory } from 'react-router-dom' 
 
 const App = () => {
   const [users, setUsers] = useState([]);
+  const [message, setMessage] = useState("");
+  let history = useHistory()
+
   useEffect(() => {
-    async function fetchData() {
+    getUsers();
+  }, []);
+
+  const getUsers = async () => {
+    try {
       const getPostsPromise = await axiosInstance.get("/");
       setUsers(getPostsPromise.data);
+    } catch (err) {
+      setMessage(err.response.data.message);
     }
-    fetchData();
-  }, []);
+  };
 
   const Delete = (id) => {
     axiosInstance.delete(`/${id}`).then((res) => {
-      const filtered = users.filter((user) => res.data !== user.id );
+      const filtered = users.filter((user) => res.data !== user.id);
       setUsers(filtered);
-    }); 
+    });
   };
-
-  //TODO: UPDATE WON'T WORK
-  const Update = async (id, data,) => {
+  const Update = async (id, data) => {
     try {
+      //updated elements of the updated form
+      data.id = parseInt(id);
       const updatePost = await axiosInstance.put(`/${id}`, data);
-      const updatedPostData = updatePost.data
-      const filterePosts = users.filter((post => post.id === id)) 
-      console.log(id)
-      console.log(users)
-      console.log(filterePosts)
-      setUsers([...users, updatedPostData]);
+      const updatedPostData = updatePost.data;
+     
+      //find where the element that was updated was at in orginal array 
+      const index = users.findIndex(user => user.id === data.id)
+
+      //update the old data in the array at this index with the new data
+      users[index] = updatedPostData
+
+      //set it to state
+      setUsers([...users]);
+
+      history.push("/Users");
     } catch (err) {
-      console.log(err);
+      setMessage(err.response.data.message)
     }
   };
 
   return (
-    <blogContext.Provider
-      value={{ users, setUsers, Delete, Update }}>
+    <blogContext.Provider value={{ users, setUsers, Delete, Update, message }}>
       <div className="container">
         <Nav />
         <Route exact path="/Users" component={Users} />

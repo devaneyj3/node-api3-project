@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
-import { Button } from "reactstrap";
+import { Button, Alert } from "reactstrap";
 import { blogContext } from "../../context/blogContext";
-import './Edit_User.scss';
+import "./Edit_User.scss";
 
 const Edit_User = (props) => {
   const [Edit_User, setEdit_User] = useState({
@@ -21,13 +21,13 @@ const Edit_User = (props) => {
     e.preventDefault();
     data.Update(id, Edit_User);
     setEdit_User({ name: "" });
-    props.history.push("/Posts");
   };
 
   return (
     <>
       <section className="Edit_User">
         <h1>Edit the user</h1>
+        {data.message ? <Alert color="danger">{data.message}</Alert> : null}
         <form onSubmit={submitForm}>
           <input
             text="text"
@@ -36,7 +36,7 @@ const Edit_User = (props) => {
             value={Edit_User.name}
             placeholder={name}
           />
-          <br/>
+          <br />
           <Button color="success" type="submit">
             Edit
           </Button>

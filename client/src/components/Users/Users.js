@@ -7,12 +7,14 @@ import moment from "moment";
 
 const Users = () => {
   const data = useContext(blogContext);
+  data.message = '';
+
   return (
     <div className="Users-Container">
       <h3>Today is {moment().format("MMMM Do YYYY")}</h3>
       <section className="Users">
         {data.users.length === 0 ? (
-          <Alert color="danger">There are no users</Alert>
+          <Alert color="danger">{data.message}</Alert>
         ) : (
           data.users.map((user) => {
             return (

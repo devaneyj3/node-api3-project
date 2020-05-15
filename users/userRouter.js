@@ -9,10 +9,9 @@ const postDataBase = require('../posts/postDb')
 router.post('/', validateUser, async(req, res) => {
   try {
     const addUser = await userDataBase.insert(req.body)
-    console.log(addUser)
     res.status(201).send(addUser)
   } catch {
-    res.status(500).json({errorMessage: 'There was an error adding information to the database'})
+    res.status(500).json({message: 'There was an error adding information to the database'})
   }
 });
 // ADDS A POST FOR A USER AND ALL ERROR HANDLING WORKS WITH VALIDATE USER AND VALIDATE USER ID MIDDLEWARE WORKS
@@ -24,7 +23,7 @@ router.post('/:id/posts', validateUserId, validatePost, async(req, res) => {
       res.status(201).send(addPost)
   }
   catch {
-    res.status(500).json({errorMessage: 'There was an error adding information to the database'})
+    res.status(500).json({message: 'There was an error adding information to the database'})
   }
 });
 
@@ -47,11 +46,10 @@ router.get('/:id', validateUserId,  async(req, res) => {
   const id = paramsId(req)
   try {
       const getUserById = await userDataBase.getById(id)
-      console.log(id)
       res.status(200).send(getUserById);
      }
    catch {
-      res.status(500).json({errorMessage: 'There was an error getting information from the database'})
+      res.status(500).json({message: 'There was an error getting information from the database'})
   }
 });
 
@@ -59,14 +57,13 @@ router.get('/:id', validateUserId,  async(req, res) => {
 router.get('/:id/posts', validateUserId, async (req, res) => {
   try {
     const getUserPost = await userDataBase.getUserPosts(paramsId(req))
-    console.log(getUserPost)
     if(getUserPost.length >= 1) {
       res.status(200).send(getUserPost);
     } else {
       res.status(404).json({message: "This user does not have any posts"})
     }
   } catch {
-    res.status(500).json({errorMessage: 'There was an error getting this user\'s posts from the database'})
+    res.status(500).json({message: 'There was an error getting this user\'s posts from the database'})
   }
 });
 
@@ -77,19 +74,18 @@ router.delete('/:id', validateUserId, async(req, res) => {
   try {
     res.status(200).send(id)
   } catch {
-    res.status(500).json({errorMessage: "There was an error connecting to the database"})
+    res.status(500).json({message: "There was an error connecting to the database"})
   }
 });
 
 // GET USER BY ID AND ALL ERROR HANDLING WORKS WITH VALIDATE USER  AND VALIDATE USER ID MIDDLEWARE
 router.put('/:id', validateUserId, validateUser, async(req, res) => {
-try {
+  try {
     await userDataBase.update(paramsId(req), req.body)
-    console.log(req.body)
     res.status(200).send(req.body)
     
   } catch {
-    res.status(500).json({errorMessage: "There was an error connecting to the database"})
+    res.status(500).json({message: "There was an error connecting to the database"})
   }
 });
 
