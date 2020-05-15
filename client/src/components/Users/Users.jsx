@@ -10,9 +10,6 @@ const Users = () => {
   return (
     <div className="Users-Container">
       <h3>Today is {moment().format("MMMM Do YYYY")}</h3>
-      {data.message !== "" ? (
-        <Alert color="danger">{data.message}</Alert>
-      ) : null}
       <section className="Users">
         {data.users.length === 0 ? (
           <Alert color="danger">There are no users</Alert>

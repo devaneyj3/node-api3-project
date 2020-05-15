@@ -11,8 +11,6 @@ import Users from "../components/Users/Users";
 
 const App = () => {
   const [users, setUsers] = useState([]);
-  const [message, setMessage] = useState("");
-  console.log(process.env)
   useEffect(() => {
     async function fetchData() {
       const getPostsPromise = await axiosInstance.get("/");
@@ -23,11 +21,8 @@ const App = () => {
 
   const Delete = (id) => {
     axiosInstance.delete(`/${id}`).then((res) => {
-      console.log(res.data)
       const filtered = users.filter((user) => res.data !== user.id );
-      console.log(filtered)
       setUsers(filtered);
-      setMessage(`Post with ID: ${res.data} has been deleted`);
     }); 
   };
 
@@ -48,7 +43,7 @@ const App = () => {
 
   return (
     <blogContext.Provider
-      value={{ users, setUsers, Delete, Update, message }}>
+      value={{ users, setUsers, Delete, Update }}>
       <div className="container">
         <Nav />
         <Route exact path="/Users" component={Users} />

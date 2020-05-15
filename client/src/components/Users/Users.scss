@@ -1,9 +1,9 @@
-.Posts {
+.Users {
     display: flex;
     flex-wrap: wrap;
-    border: 1px solid black;
-    margin: 5%;
+    margin: 6%;
+    justify-content: center;
 }
-.Post-Container {
+.Users-Container {
     margin-top: 5%;
 }

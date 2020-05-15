@@ -1,18 +1,10 @@
-.Post-Card {
+.Name-Card {
     border: 1px solid gray;
     border-radius:4%;
     margin: 2%;
-    padding: 2%;
-    .contents {
-
-    }
-    .created_at {
-        font-size: 1em;
-        font-weight: bold;
-        font-style: italic;
-        color: lightgray;
-    }
-    .updated_at {
-
+    padding: 5%;
+    text-align: center;
+    button { 
+        margin: 0 5px;
     }
 }

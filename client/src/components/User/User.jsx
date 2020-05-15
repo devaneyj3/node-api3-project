@@ -10,13 +10,11 @@ const User = (props) => {
   };
   return (
     <section className="Name-Card">
-      <p className="contents">{props.name}</p>
+      <p className="name">{props.name}</p>
       <Button onClick={props.delete} color="danger">
         Delete
       </Button>
-      <Button
-        onClick={() => edit(props.id, props.name)}
-        color="primary">
+      <Button onClick={() => edit(props.id, props.name)} color="primary">
         Edit
       </Button>
     </section>

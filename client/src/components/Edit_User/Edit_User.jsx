@@ -1,10 +1,11 @@
 import React, { useState, useContext } from "react";
 import { Button } from "reactstrap";
 import { blogContext } from "../../context/blogContext";
+import './Edit_User.scss';
 
 const Edit_User = (props) => {
   const [Edit_User, setEdit_User] = useState({
-    name: ""
+    name: "",
   });
 
   const { id } = props.match.params;
@@ -18,15 +19,15 @@ const Edit_User = (props) => {
 
   const submitForm = async (e) => {
     e.preventDefault();
-    data.Update(id, Edit_User)
-    setEdit_User({ name: ""});
-    // props.history.push("/Posts");
+    data.Update(id, Edit_User);
+    setEdit_User({ name: "" });
+    props.history.push("/Posts");
   };
 
   return (
     <>
-      <h1>Edit the user</h1>
       <section className="Edit_User">
+        <h1>Edit the user</h1>
         <form onSubmit={submitForm}>
           <input
             text="text"
@@ -35,6 +36,7 @@ const Edit_User = (props) => {
             value={Edit_User.name}
             placeholder={name}
           />
+          <br/>
           <Button color="success" type="submit">
             Edit
           </Button>
