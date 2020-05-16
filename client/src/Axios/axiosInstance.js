@@ -6,3 +6,5 @@ const ENV = process.env.NODE_ENV === 'development' ?  'http://localhost:7000/api
 export default axios.create({
   baseURL: ENV
 });
+
+console.log(ENV)
