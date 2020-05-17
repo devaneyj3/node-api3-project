@@ -1,0 +1,12 @@
+.Nav {
+    border: 1px solid black;
+    a {
+        text-decoration: none;
+        color: black;
+        margin: 0 5%;
+        &:hover {
+            color: gray;
+            cursor: pointer;
+        }
+    }
+}

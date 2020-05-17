@@ -4,7 +4,9 @@
   "description": "Node API 3 Project",
   "main": "index.js",
   "scripts": {
-    "server": "nodemon index.js"
+    "server": "nodemon index.js",
+    "start": "node index.js",
+    "heroku-postbuild": "cd client && yarn install && yarn run build"
   },
   "repository": {
     "type": "git",
@@ -23,8 +25,11 @@
   },
   "homepage": "https://github.com/LambdaSchool/node-api3-project#readme",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "knex": "^0.20.11",
+    "moment": "^2.25.3",
+    "path": "^0.12.7",
     "sqlite3": "^4.1.1"
   },
   "devDependencies": {
