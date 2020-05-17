@@ -8,9 +8,15 @@ const User = (props) => {
   const edit = (id, name) => {
     history.push(`/edit/${id}/${name}`);
   };
+
+  const goToUserPost = (id, name) => {
+    history.push(`posts/${id}/${name}`);
+  };
   return (
     <section className="Name-Card">
-      <p className="name">{props.name}</p>
+      <p onClick={() => goToUserPost(props.id, props.name)} className="name">
+        {props.name}
+      </p>
       <Button onClick={props.delete} color="danger">
         Delete
       </Button>

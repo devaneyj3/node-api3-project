@@ -4,6 +4,12 @@
     margin: 2%;
     padding: 5%;
     text-align: center;
+    .name {
+        cursor: pointer;
+        &:hover {
+            color: gray;
+        }
+    }
     button { 
         margin: 0 5px;
     }
