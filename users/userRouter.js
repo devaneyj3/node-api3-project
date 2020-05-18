@@ -8,7 +8,7 @@ const userDataBase = require('./userDb')
 const postDataBase = require('../posts/postDb')
 
 // POST A NEW USER AND ALL ERROR HANDLING WORKS WITH VALIDATE USER MIDDLEWARE WORKSç
-router.post('/', middleware.validateUser, async(req, res) => {
+router.post('/', middleware.validateUserId, async (req, res) => {
   try {
     const addUser = await userDataBase.insert(req.body)
     res.status(201).send(addUser)

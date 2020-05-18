@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./App.scss";
 import { Route, Redirect } from "react-router-dom";
 import { blogContext } from "../context/blogContext";
-import axiosInstance from "../Axios/axiosInstance";
+import { usersURL, postsURL } from "../Axios/axiosInstance";
 import Nav from "../components/Nav/Nav";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Edit_User from "../components/Edit_User/Edit_User";
@@ -10,11 +10,11 @@ import AddNewUser from "../components/Add_New_User/Add_New_User";
 import Users from "../components/Users/Users";
 import { useHistory } from "react-router-dom";
 import Posts from "../components/Posts/Posts";
-import NewPost from '../components/NewPost/NewPost';
+import NewPost from "../components/NewPost/NewPost";
 
 const App = () => {
   const [users, setUsers] = useState([]);
-  const [ posts, setPosts ] = useState([]);
+  const [posts, setPosts] = useState([]);
   const [message, setMessage] = useState("");
   let history = useHistory();
 
@@ -24,7 +24,7 @@ const App = () => {
 
   const getUsers = async () => {
     try {
-      const getPostsPromise = await axiosInstance.get("/");
+      const getPostsPromise = await usersURL.get("/");
       setUsers(getPostsPromise.data);
     } catch (err) {
       setMessage(err.response.data.message);
@@ -32,7 +32,7 @@ const App = () => {
   };
 
   const Delete = (id) => {
-    axiosInstance.delete(`/${id}`).then((res) => {
+    usersURL.delete(`/${id}`).then((res) => {
       const filtered = users.filter((user) => res.data !== user.id);
       setUsers(filtered);
     });
@@ -41,7 +41,7 @@ const App = () => {
     try {
       //updated elements of the updated form
       data.id = parseInt(id);
-      const updatePost = await axiosInstance.put(`/${id}`, data);
+      const updatePost = await usersURL.put(`/${id}`, data);
       const updatedPostData = updatePost.data;
 
       //find where the element that was updated was at in orginal array
@@ -61,8 +61,9 @@ const App = () => {
 
   const getPosts = async (id, set) => {
     try {
-      const posts = await axiosInstance.get(`/${id}/posts`);
-      setPosts(posts.data)
+      const posts = await usersURL.get(`/${id}/posts`);
+      //TODO:IF I ADD A POST IT ADDS FOR ALL AND INFINITE LOOP REQUEST
+      setPosts(posts.data);
     } catch (err) {
       set(err.response.data.message);
     }
@@ -70,27 +71,47 @@ const App = () => {
 
   const addPost = async (id, changes, set) => {
     try {
-      const add = await axiosInstance.post(`/${id}/posts`, changes);
-      setPosts([...posts, add.data])
-      set('Your post has been added. Redirecting...');
-      setTimeout(()=> {
-        history.goBack()
-      }, 2000)
+      const add = await usersURL.post(`/${id}/posts`, changes);
+      setPosts([...posts, add.data]);
+      set("Your post has been added. Redirecting...");
+      setTimeout(() => {
+        history.goBack();
+      }, 2000);
     } catch (err) {
       set(err.response.data.message);
+    }
+  };
+  const deletePost = async (id) => {
+    const remove = await postsURL.delete(`/${id}`);
+    console.log("I'm deleting the post");
+    try {
+      const filtered = posts.filter((post) => remove.data !== post.id);
+      setPosts(filtered);
+    } catch (err) {
+      setMessage(err.response.data.message);
     }
   };
 
   return (
     <blogContext.Provider
-      value={{ users, posts, addPost, getPosts, setUsers, Delete, Update, message }}>
+      value={{
+        users,
+        posts,
+        addPost,
+        getPosts,
+        deletePost,
+        setUsers,
+        Delete,
+        Update,
+        message,
+      }}>
       <div className="container">
         <Nav />
         <Route exact path="/Users" component={Users} />
         <Route exact path="/Add_New_User" component={AddNewUser} />
         <Route exact path="/edit/:id/:name" component={Edit_User} />
         <Route exact path="/posts/:id/:name" component={Posts} />
-        <Route exact path='/addNewPost/:id/:name' component={NewPost}/>
+        <Route exact path="/addNewPost/:id/:name" component={NewPost} />
         <Redirect from="/" to="/Users" />
       </div>
     </blogContext.Provider>

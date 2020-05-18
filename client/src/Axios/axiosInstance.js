@@ -1,10 +1,22 @@
 import axios from "axios";
 
-//this makes it work
-const ENV = process.env.NODE_ENV === 'development' ?  'http://localhost:7000/api/users' : 'https://blog1234567.herokuapp.com/api/users'
+const user = "users";
+const posts = "posts";
 
-export default axios.create({
-  baseURL: ENV
+const userServer =
+  process.env.NODE_ENV === "development"
+    ? `http://localhost:7000/api/${user}`
+    : `https://blog1234567.herokuapp.com/api/${user}`;
+
+const postServer =
+  process.env.NODE_ENV === "development"
+    ? `http://localhost:7000/api/${posts}`
+    : `https://blog1234567.herokuapp.com/api/${posts}`;
+
+export const usersURL = axios.create({
+  baseURL: userServer,
 });
 
-console.log(ENV)
+export const postsURL = axios.create({
+  baseURL: postServer,
+});

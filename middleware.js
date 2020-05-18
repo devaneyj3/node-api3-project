@@ -6,10 +6,10 @@ const userDataBase = require('./users/userDb');
 
 // validates the user id on every request that expects a user id parameter
 
-async function validateUserId(req, res, next) {
+async function validateUserId(req, res, next, db) {
 // if the id parameter is valid, store that user object as req.user
   const id = helper.paramsId(req)
-  const users = await userDataBase.get();
+  const users = await bd.get();
   const checkIdArray = helper.IDnotInDatabase(id, users);
   // if the id parameter does not match any user id in the database, cancel the request and respond with status 400 and { message: "invalid user id" } 
   if(checkIdArray === 0 ) {

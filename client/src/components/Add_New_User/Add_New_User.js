@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import axiosInstance from "../../Axios/axiosInstance";
+import { usersURL } from "../../Axios/axiosInstance";
 import { blogContext } from "../../context/blogContext";
 import { useHistory } from "react-router-dom";
 import { Alert, Button } from "reactstrap";
@@ -23,7 +23,7 @@ const AddNewUser = () => {
   const submitForm = async (e) => {
     e.preventDefault();
     try {
-      const newUser = await axiosInstance.post("/", AddNewUser);
+      const newUser = await usersURL.post("/", AddNewUser);
       data.setUsers([...data.users, newUser.data]);
       setMessage(newUser.data.name + " was added. Redirecting...");
       setTimeout(() => {

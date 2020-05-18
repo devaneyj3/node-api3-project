@@ -30,7 +30,16 @@ const Posts = (props) => {
       {message ? <Alert color="danger">{message}</Alert> : null}
       <section className="posts">
         {data.posts.map((post) => {
-          return <Post key={post.id} text={post.text} id={post.id} />;
+          return (
+            <Post
+              key={post.id}
+              text={post.text}
+              remove={() => {
+                data.deletePost(post.id);
+                console.log("deleting");
+              }}
+            />
+          );
         })}
       </section>
     </>
