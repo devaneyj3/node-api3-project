@@ -59,24 +59,25 @@ const App = () => {
     }
   };
 
-  const getPosts = async (id) => {
+  const getPosts = async (id, set) => {
     try {
       const posts = await axiosInstance.get(`/${id}/posts`);
+      setPosts(posts.data)
     } catch (err) {
-      setMessage(err.response.data.message);
+      set(err.response.data.message);
     }
   };
 
-  const addPost = async (id, changes, name) => {
+  const addPost = async (id, changes, set) => {
     try {
       const add = await axiosInstance.post(`/${id}/posts`, changes);
       setPosts([...posts, add.data])
-      setMessage('Your post has been added. Redirecting...');
+      set('Your post has been added. Redirecting...');
       setTimeout(()=> {
         history.goBack()
       }, 2000)
     } catch (err) {
-      setMessage(err.response.data.message);
+      set(err.response.data.message);
     }
   };
 

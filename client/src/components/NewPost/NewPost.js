@@ -6,12 +6,11 @@ const NewPost = (props) => {
   const [NewPost, setNewPost] = useState({
     text: "",
   });
+  const [message, setMessage] = useState("");
 
   const data = useContext(blogContext);
 
   const { id } = props.match.params;
-
-  const { name } = props.match.params;
 
   const change = (e) => {
     setNewPost({ ...NewPost, [e.target.name]: e.target.value });
@@ -20,13 +19,13 @@ const NewPost = (props) => {
   const submitForm = (e) => {
     e.preventDefault();
     //this gets posted to specific users post by the setter list everyones post regardless of who it is
-    data.addPost(id, NewPost, name);
+    data.addPost(id, NewPost, setMessage);
     setNewPost({ text: "" });
   };
 
   return (
     <>
-      {data.message ? <Alert color="success">{data.message}</Alert> : null}
+      {message ? <Alert color="success">{message}</Alert> : null}
       <section className="NewPost">
         <form onSubmit={submitForm}>
           <textarea
