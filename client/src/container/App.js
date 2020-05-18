@@ -1,7 +1,3 @@
-import React, { useState, useEffect } from "react";
-import "./App.scss";
-import { Route, Redirect } from "react-router-dom";
-import { blogContext } from "../context/blogContext";
 import { usersURL, postsURL } from "../Axios/axiosInstance";
 import Nav from "../components/Nav/Nav";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -11,6 +7,10 @@ import Users from "../components/Users/Users";
 import { useHistory } from "react-router-dom";
 import Posts from "../components/Posts/Posts";
 import NewPost from "../components/NewPost/NewPost";
+import { ContextProvider } from "../useReducer";
+import React, { useState } from "react";
+import "./App.scss";
+import { Route, Redirect } from "react-router-dom";;
 
 const App = () => {
   const [users, setUsers] = useState([]);
@@ -18,25 +18,6 @@ const App = () => {
   const [message, setMessage] = useState("");
   let history = useHistory();
 
-  useEffect(() => {
-    getUsers();
-  }, []);
-
-  const getUsers = async () => {
-    try {
-      const getPostsPromise = await usersURL.get("/");
-      setUsers(getPostsPromise.data);
-    } catch (err) {
-      setMessage(err.response.data.message);
-    }
-  };
-
-  const Delete = (id) => {
-    usersURL.delete(`/${id}`).then((res) => {
-      const filtered = users.filter((user) => res.data !== user.id);
-      setUsers(filtered);
-    });
-  };
   const Update = async (id, data) => {
     try {
       //updated elements of the updated form
@@ -59,11 +40,13 @@ const App = () => {
     }
   };
 
-  const getPosts = async (id, set) => {
+  const getPosts = async (id, name, set) => {
     try {
       const posts = await usersURL.get(`/${id}/posts`);
       //TODO:IF I ADD A POST IT ADDS FOR ALL AND INFINITE LOOP REQUEST
-      setPosts(posts.data);
+      if (id == name) {
+        setPosts(posts.data); 
+      }
     } catch (err) {
       set(err.response.data.message);
     }
@@ -86,25 +69,14 @@ const App = () => {
     console.log("I'm deleting the post");
     try {
       const filtered = posts.filter((post) => remove.data !== post.id);
-      setPosts(filtered);
+      setPosts([filtered]);
     } catch (err) {
       setMessage(err.response.data.message);
     }
   };
 
   return (
-    <blogContext.Provider
-      value={{
-        users,
-        posts,
-        addPost,
-        getPosts,
-        deletePost,
-        setUsers,
-        Delete,
-        Update,
-        message,
-      }}>
+    <ContextProvider>
       <div className="container">
         <Nav />
         <Route exact path="/Users" component={Users} />
@@ -114,7 +86,7 @@ const App = () => {
         <Route exact path="/addNewPost/:id/:name" component={NewPost} />
         <Redirect from="/" to="/Users" />
       </div>
-    </blogContext.Provider>
+    </ContextProvider>
   );
 };
 

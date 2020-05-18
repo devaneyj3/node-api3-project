@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { usersURL } from "../../Axios/axiosInstance";
-import { blogContext } from "../../context/blogContext";
+import { BlogContext } from '../../useReducer';
 import { useHistory } from "react-router-dom";
 import { Alert, Button } from "reactstrap";
 import "./Add_New_User.scss";
@@ -14,7 +14,7 @@ const AddNewUser = () => {
 
   const history = useHistory();
 
-  const data = useContext(blogContext);
+  const [state, dispatch] = useContext(BlogContext);
 
   const change = (e) => {
     setAddNewUser({ ...AddNewUser, [e.target.name]: e.target.value });
@@ -24,7 +24,7 @@ const AddNewUser = () => {
     e.preventDefault();
     try {
       const newUser = await usersURL.post("/", AddNewUser);
-      data.setUsers([...data.users, newUser.data]);
+      dispatch({ type: 'addNewUser', payload: newUser.data });
       setMessage(newUser.data.name + " was added. Redirecting...");
       setTimeout(() => {
         history.push("/Users");

@@ -10,12 +10,14 @@ const Posts = (props) => {
   const { id } = props.match.params;
   const { name } = props.match.params;
 
-  const data = useContext(blogContext);
+  const [state, dispatch] = useContext(blogContext);
+  console.log(dispatch)
   const history = useHistory();
 
-  useEffect(() => {
-    data.getPosts(id, setMessage);
-  }, [data, id]);
+
+  // useEffect(() => {
+  //   getPosts(id, name, setMessage);
+  // }, []);
 
   const goToAddPost = (id, name) => {
     history.push(`/addNewPost/${id}/${name}`);
@@ -29,7 +31,7 @@ const Posts = (props) => {
       <h2>Here are the posts for {name}</h2>
       {message ? <Alert color="danger">{message}</Alert> : null}
       <section className="posts">
-        {data.posts.map((post) => {
+        {/* {posts.map((post) => {
           return (
             <Post
               key={post.id}
@@ -37,7 +39,7 @@ const Posts = (props) => {
               remove={() => {
                 data.deletePost(post.id);
                 console.log("deleting");
-              }}
+              }} */}
             />
           );
         })}

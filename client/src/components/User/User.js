@@ -17,7 +17,7 @@ const User = (props) => {
       <p onClick={() => goToUserPost(props.id, props.name)} className="name">
         {props.name}
       </p>
-      <Button onClick={props.delete} color="danger">
+      <Button onClick={props.remove} color="danger">
         Delete
       </Button>
       <Button onClick={() => edit(props.id, props.name)} color="primary">
