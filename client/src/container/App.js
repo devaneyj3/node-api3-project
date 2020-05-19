@@ -4,7 +4,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Edit_User from "../components/Edit_User/Edit_User";
 import AddNewUser from "../components/Add_New_User/Add_New_User";
 import Users from "../components/Users/Users";
-import { useHistory } from "react-router-dom";
 import Posts from "../components/Posts/Posts";
 import NewPost from "../components/NewPost/NewPost";
 import { ContextProvider } from "../useReducer";
@@ -13,35 +12,9 @@ import "./App.scss";
 import { Route, Redirect } from "react-router-dom";;
 
 const App = () => {
-  const [users, setUsers] = useState([]);
   const [posts, setPosts] = useState([]);
   const [message, setMessage] = useState("");
-  let history = useHistory();
 
-  const getPosts = async (id, name, set) => {
-    try {
-      const posts = await usersURL.get(`/${id}/posts`);
-      //TODO:IF I ADD A POST IT ADDS FOR ALL AND INFINITE LOOP REQUEST
-      if (id == name) {
-        setPosts(posts.data); 
-      }
-    } catch (err) {
-      set(err.response.data.message);
-    }
-  };
-
-  const addPost = async (id, changes, set) => {
-    try {
-      const add = await usersURL.post(`/${id}/posts`, changes);
-      setPosts([...posts, add.data]);
-      set("Your post has been added. Redirecting...");
-      setTimeout(() => {
-        history.goBack();
-      }, 2000);
-    } catch (err) {
-      set(err.response.data.message);
-    }
-  };
   const deletePost = async (id) => {
     const remove = await postsURL.delete(`/${id}`);
     console.log("I'm deleting the post");

@@ -1,6 +1,8 @@
 import React, { useState, useContext } from "react";
 import { Button, Alert } from "reactstrap";
 import { BlogContext } from "../../useReducer";
+import { usersURL } from "../../Axios/axiosInstance";
+import { useHistory } from "react-router-dom";
 
 const NewPost = (props) => {
   const [NewPost, setNewPost] = useState({
@@ -8,7 +10,8 @@ const NewPost = (props) => {
   });
   const [message, setMessage] = useState("");
 
-  const data = useContext(BlogContext);
+  const [state, dispatch] = useContext(BlogContext);
+  const history = useHistory();
 
   const { id } = props.match.params;
 
@@ -16,10 +19,18 @@ const NewPost = (props) => {
     setNewPost({ ...NewPost, [e.target.name]: e.target.value });
   };
 
-  const submitForm = (e) => {
+  const submitForm = async (e) => {
     e.preventDefault();
-    //this gets posted to specific users post by the setter list everyones post regardless of who it is
-    data.addPost(id, NewPost, setMessage);
+    try {
+      const add = await usersURL.post(`/${id}/posts`, NewPost);
+      dispatch({ type: "addPost", payload: add.data });
+      setMessage("Your post has been added. Redirecting...");
+      setTimeout(() => {
+        history.goBack();
+      }, 2000);
+    } catch (err) {
+      setMessage(err.response.data.message);
+    }
     setNewPost({ text: "" });
   };
 

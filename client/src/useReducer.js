@@ -30,6 +30,16 @@ const reducer = (state, aciton) => {
         ...state,
         users: aciton.payload,
       };
+    case "getPosts":
+      return {
+        ...state,
+        posts: aciton.payload,
+      };
+      case "addPost":
+      return {
+        ...state,
+        posts: [...state.posts, aciton.payload],
+      };
     default:
       return state;
   }
