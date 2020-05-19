@@ -1,7 +1,7 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useContext, useState } from "react";
 import Post from "../Post/Post";
 import "./Posts.scss";
-import { blogContext } from "../../context/blogContext";
+import { BlogContext } from "../../useReducer";
 import { Alert, Button } from "reactstrap";
 import { useHistory } from "react-router-dom";
 
@@ -10,7 +10,7 @@ const Posts = (props) => {
   const { id } = props.match.params;
   const { name } = props.match.params;
 
-  const [state, dispatch] = useContext(blogContext);
+  const [state, dispatch] = useContext(BlogContext);
   console.log(dispatch)
   const history = useHistory();
 

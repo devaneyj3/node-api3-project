@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { Button, Alert } from "reactstrap";
-import { blogContext } from "../../context/blogContext";
+import { BlogContext } from "../../useReducer";
 
 const NewPost = (props) => {
   const [NewPost, setNewPost] = useState({
@@ -8,7 +8,7 @@ const NewPost = (props) => {
   });
   const [message, setMessage] = useState("");
 
-  const data = useContext(blogContext);
+  const data = useContext(BlogContext);
 
   const { id } = props.match.params;
 

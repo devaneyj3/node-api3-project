@@ -5,7 +5,7 @@ export const BlogContext = createContext();
 
 const initialState = {
   users: [],
-  posts: []
+  posts: [],
 };
 
 const reducer = (state, aciton) => {
@@ -16,14 +16,19 @@ const reducer = (state, aciton) => {
         users: aciton.payload,
       };
     case "delete":
-          return {
-          ...state,
+      return {
+        ...state,
         users: aciton.payload,
       };
     case "addUser":
-          return {
-          ...state,
-          users: [...state.users, aciton.payload],
+      return {
+        ...state,
+        users: [...state.users, aciton.payload],
+      };
+    case "editUser":
+      return {
+        ...state,
+        users: aciton.payload,
       };
     default:
       return state;

@@ -83,7 +83,7 @@ router.delete('/:id', middleware.validateUserId, async(req, res) => {
 // GET USER BY ID AND ALL ERROR HANDLING WORKS WITH VALIDATE USER  AND VALIDATE USER ID MIDDLEWARE
 router.put('/:id', middleware.validateUserId, middleware.validateUser, async(req, res) => {
   try {
-    await userDataBase.update(paramsId(req), req.body)
+    await userDataBase.update(helper.paramsId(req), req.body)
     res.status(200).send(req.body)
     
   } catch {

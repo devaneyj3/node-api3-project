@@ -18,28 +18,6 @@ const App = () => {
   const [message, setMessage] = useState("");
   let history = useHistory();
 
-  const Update = async (id, data) => {
-    try {
-      //updated elements of the updated form
-      data.id = parseInt(id);
-      const updatePost = await usersURL.put(`/${id}`, data);
-      const updatedPostData = updatePost.data;
-
-      //find where the element that was updated was at in orginal array
-      const index = users.findIndex((user) => user.id === data.id);
-
-      //update the old data in the array at this index with the new data
-      users[index] = updatedPostData;
-
-      //set it to state
-      setUsers([...users]);
-
-      history.push("/Users");
-    } catch (err) {
-      setMessage(err.response.data.message);
-    }
-  };
-
   const getPosts = async (id, name, set) => {
     try {
       const posts = await usersURL.get(`/${id}/posts`);
